@@ -11,7 +11,7 @@
 /[Uu]ser[Ss]ettings/
 /SampleFramework/
 /Assets/StreamingAssets
-/Assets/Plugins
+/Assets/Plugins/
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
@@ -73,3 +73,6 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# VR Framework
+/[Aa]ssets/[Oo]culus/[Ss]ample[Ff]ramework/
