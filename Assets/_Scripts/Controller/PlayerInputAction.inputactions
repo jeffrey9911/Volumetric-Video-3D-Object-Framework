@@ -3,12 +3,12 @@
     "maps": [
         {
             "name": "Player",
-            "id": "3dd98893-73f6-415c-87b8-f8d2575e839e",
+            "id": "29c84386-79f1-4fa7-a277-c610639c894a",
             "actions": [
                 {
                     "name": "Editor",
                     "type": "Button",
-                    "id": "a4d26506-c00a-460e-8ec2-684ff27b5ffe",
+                    "id": "7d94c849-e92a-4d95-928d-2298aae4311a",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -18,8 +18,8 @@
             "bindings": [
                 {
                     "name": "",
-                    "id": "1dfd4bce-865d-46ad-b9b9-4d09ad6d6a5f",
-                    "path": "<XRController>{LeftHand}/start",
+                    "id": "ec8d1cc8-7f85-408d-95a2-833070ceb57d",
+                    "path": "<OculusTouchController>{LeftHand}/start",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

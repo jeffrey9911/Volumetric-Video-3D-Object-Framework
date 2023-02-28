@@ -1,11 +1,11 @@
 {
   "dependencies": {
-    "com.meta.xr.sdk.utilities.samples": "49.0.1-preview",
     "com.unity.collab-proxy": "1.17.2",
     "com.unity.feature.development": "1.0.1",
     "com.unity.ide.rider": "3.0.15",
     "com.unity.ide.visualstudio": "2.0.16",
     "com.unity.ide.vscode": "1.2.5",
+    "com.unity.inputsystem": "1.4.4",
     "com.unity.test-framework": "1.1.33",
     "com.unity.textmeshpro": "3.0.6",
     "com.unity.timeline": "1.7.1",
@@ -13,7 +13,6 @@
     "com.unity.visualscripting": "1.7.8",
     "com.unity.xr.management": "4.3.3",
     "com.unity.xr.oculus": "3.0.2",
-    "com.unity.xr.openxr": "1.4.2",
     "com.unity.modules.ai": "1.0.0",
     "com.unity.modules.androidjni": "1.0.0",
     "com.unity.modules.animation": "1.0.0",
@@ -45,14 +44,5 @@
     "com.unity.modules.vr": "1.0.0",
     "com.unity.modules.wind": "1.0.0",
     "com.unity.modules.xr": "1.0.0"
-  },
-  "scopedRegistries": [
-    {
-      "name": "Meta XR",
-      "url": "https://npm.developer.oculus.com",
-      "scopes": [
-        "com.meta.xr"
-      ]
-    }
-  ]
+  }
 }
