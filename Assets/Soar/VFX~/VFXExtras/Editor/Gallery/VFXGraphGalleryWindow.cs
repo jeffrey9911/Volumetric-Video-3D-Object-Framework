@@ -28,13 +28,22 @@ namespace UnityEditor.VFX
             window.mode = WindowMode.CreateAsset;
         }
 
+#if UNITY_2022_1_OR_NEWER
+        internal static void OpenWindowAddTemplate(Vector2 addPosition, VFXViewWindow vfxWindow)
+        {
+            var window = GetWindow<VFXGraphGalleryWindow>(true, $"Create New System from Template", true);
+            window.mode = WindowMode.AddNode;
+            window.addPosition = addPosition;
+            vfxInvokingWindow = vfxWindow;
+        }
+#else
         public static void OpenWindowAddTemplate(Vector2 addPosition)
         {
             var window = GetWindow<VFXGraphGalleryWindow>(true, $"Create New System from Template", true);
             window.mode = WindowMode.AddNode;
             window.addPosition = addPosition;
         }
-
+#endif
         private void OnEnable()
         {
             minSize = new Vector2(800, 480);
@@ -52,7 +61,9 @@ namespace UnityEditor.VFX
         Vector2 scroll;
         Vector2 scrollDesc;
 
-
+#if UNITY_2022_1_OR_NEWER
+        static VFXViewWindow vfxInvokingWindow;
+#endif
         List<VFXGraphGalleryTemplate> categories;
 
         VFXGraphGalleryTemplate.Template selected;
@@ -96,6 +107,177 @@ namespace UnityEditor.VFX
             selectedSource = selected.templateAsset;
         }
 
+#if UNITY_2022_1_OR_NEWER
+        private void OnGUI()
+        {
+            using (new GUILayout.HorizontalScope(Styles.header, GUILayout.Height(80)))
+            {
+                GUILayout.Box(Contents.VFXIcon, EditorStyles.label, GUILayout.Height(64));
+                using (new GUILayout.VerticalScope())
+                {
+                    if (mode == WindowMode.AddNode)
+                        GUILayout.Label(Contents.Cache("Let's Add a new System to our Graph"), Styles.bigLabel);
+                    else if (mode == WindowMode.CreateAsset)
+                        GUILayout.Label(Contents.Cache("Let's Select a template as Starting Point"), Styles.bigLabel);
+                    else
+                        GUILayout.Label(Contents.Cache("## NOT IMPLEMENTED ##"), Styles.bigLabel);
+
+                    GUILayout.Label(Contents.Cache("Pick a template from the gallery"), EditorStyles.label);
+                }
+                GUILayout.FlexibleSpace();
+            }
+            EditorGUI.DrawRect(new Rect(0, 80, 800, 1), Color.black);
+
+            int width = 512;
+
+            using (new GUILayout.HorizontalScope(GUILayout.ExpandHeight(true)))
+            {
+                EditorGUI.DrawRect(new Rect(0, 80, width, 368), new Color(0, 0, 0, 0.2f));
+                using (new GUILayout.VerticalScope(GUILayout.Width(width)))
+                {
+                    scroll = GUILayout.BeginScrollView(scroll);
+
+                    foreach (var category in categories)
+                    {
+                        // Group
+                        GUILayout.Space(4);
+                        using (new GUILayout.HorizontalScope(EditorStyles.toolbar, GUILayout.ExpandWidth(true)))
+                        {
+                            GUILayout.Label(string.IsNullOrEmpty(category.categoryName) ? category.name : category.categoryName, Styles.midLabel);
+                            GUILayout.FlexibleSpace();
+                        }
+                        GUILayout.Space(4);
+
+                        int i = 0;
+                        foreach (var t in category.templates)
+                        {
+                            if (i % 3 == 0)
+                                GUILayout.BeginHorizontal();
+
+                            if (selectedSource != null && selectedSource == t.templateAsset)
+                                GUI.backgroundColor = new Color(0.6f, 1.2f, 1.6f, 1.0f);
+
+
+                            using (new GUILayout.VerticalScope(Styles.galButton, GUILayout.Width((width / 3) - 8), GUILayout.Height(128)))
+                            {
+                                GUILayout.Space(8);
+                                Rect r = GUILayoutUtility.GetRect(120, 96);
+                                GUI.DrawTexture(r, t.preview == null ? Contents.emptyPreview : t.preview);
+                                GUILayout.Label(t.name, Styles.labelCenter);
+
+                                r = new RectOffset(4, 4, 4, 20).Add(r);
+                                if (Event.current.type == EventType.MouseDown && r.Contains(Event.current.mousePosition))
+                                {
+                                    selected = t;
+                                    selectedCategory = !string.IsNullOrEmpty(category.categoryName) ? category.categoryName : category.name;
+                                    selectedSource = selected.templateAsset;
+                                }
+                            }
+
+                            if (i % 3 == 2)
+                                GUILayout.EndHorizontal();
+
+                            i++;
+
+                            GUI.backgroundColor = Color.white;
+                        }
+
+                        if ((i - 1) % 3 < 2)
+                        {
+                            GUILayout.FlexibleSpace();
+                            GUILayout.EndHorizontal();
+                        }
+
+                    }
+
+                    GUILayout.FlexibleSpace();
+                    GUILayout.EndScrollView();
+                }
+                EditorGUI.DrawRect(new Rect(width, 80, 1, 368), Color.black);
+
+                using (new GUILayout.VerticalScope(GUILayout.ExpandWidth(true)))
+                {
+                    GUILayout.Space(180);
+                    Rect previewRect = new Rect(width + 1, 81, 799 - width, 180);
+                    GUI.DrawTexture(previewRect, selected.preview == null ? Contents.emptyPreview : selected.preview); ;
+
+                    GUILayout.Label($"{selected.name}", Styles.bigLabel);
+                    GUILayout.Label($"Category : {selectedCategory}");
+                    GUILayout.Space(4);
+                    using (new GUILayout.VerticalScope(EditorStyles.label, GUILayout.Height(136)))
+                    {
+                        scrollDesc = GUILayout.BeginScrollView(scrollDesc);
+                        GUILayout.Label(selected.description, Styles.labelWW);
+                        GUILayout.EndScrollView();
+                    }
+                }
+            }
+            GUILayout.Space(4);
+            EditorGUI.DrawRect(new Rect(0, 448, 800, 1), Color.black);
+
+            bool pressedReturn = Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.Return;
+
+            using (new GUILayout.HorizontalScope(GUILayout.Height(24)))
+            {
+                if (mode == WindowMode.CreateAsset)
+                {
+
+                    GUILayout.Space(8);
+                    createGameObject = GUILayout.Toggle(createGameObject, "Create Game Object & Attach");
+
+                    GUILayout.FlexibleSpace();
+
+                    EditorGUI.BeginDisabledGroup(selectedSource == null);
+
+                    if (GUILayout.Button("Create", GUILayout.Width(80), GUILayout.Height(22)) || pressedReturn)
+                    {
+                        string sourceAssetPath = AssetDatabase.GetAssetPath(selectedSource);
+                        AssetDatabase.CopyAsset(sourceAssetPath, outPath);
+                        var asset = AssetDatabase.LoadAssetAtPath(outPath, typeof(VisualEffectAsset));
+                        ProjectWindowUtil.ShowCreatedAsset(asset);
+
+                        VFXViewWindow window = EditorWindow.GetWindow<VFXViewWindow>();
+
+                        if (createGameObject)
+                        {
+                            var go = new GameObject();
+                            go.transform.position = SceneView.lastActiveSceneView.camera.transform.position + SceneView.lastActiveSceneView.camera.transform.forward * 4;
+                            go.name = asset.name;
+                            var vfx = go.AddComponent<VisualEffect>();
+                            vfx.visualEffectAsset = asset as VisualEffectAsset;
+                            Selection.activeGameObject = go;
+                            window.LoadAsset(asset as VisualEffectAsset, vfx);
+                        }
+                        else
+                        {
+                            window.LoadAsset(asset as VisualEffectAsset, null);
+                        }
+                        Close();
+                    }
+                    EditorGUI.EndDisabledGroup();
+                    GUILayout.Space(8);
+                }
+                else if (mode == WindowMode.AddNode)
+                {
+                    GUILayout.FlexibleSpace();
+                    EditorGUI.BeginDisabledGroup(selectedSource == null);
+
+                    if (GUILayout.Button("Add System", GUILayout.Width(100), GUILayout.Height(22)) || pressedReturn)
+                    {
+                        vfxInvokingWindow.graphView.CreateTemplateSystem(AssetDatabase.GetAssetPath(selectedSource), addPosition, null);
+                        vfxInvokingWindow = null;
+                        Close();
+                    }
+                    EditorGUI.EndDisabledGroup();
+                    GUILayout.Space(8);
+                }
+                else
+                    throw new System.NotImplementedException();
+
+
+            }
+        }
+#else
         private void OnGUI()
         { 
             using (new GUILayout.HorizontalScope(Styles.header, GUILayout.Height(80)))
@@ -264,6 +446,7 @@ namespace UnityEditor.VFX
 
             }
         }
+#endif
         class Contents
         {
             public static Texture vfxAssetIcon;

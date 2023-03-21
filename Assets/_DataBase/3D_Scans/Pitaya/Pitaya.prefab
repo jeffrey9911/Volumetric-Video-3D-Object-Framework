@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 511972430645186515}
   - component: {fileID: 3223335518858002285}
   - component: {fileID: 8562477032311808781}
+  - component: {fileID: 760573719745099792}
   m_Layer: 0
   m_Name: Pitaya
   m_TagString: Untagged
@@ -133,3 +134,16 @@ MonoBehaviour:
   m_snapOrientation: 0
   m_snapOffset: {fileID: 0}
   m_grabPoints: []
+--- !u!114 &760573719745099792
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1792140312441922032}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fe63426e49940a43bd45e33f364427f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _objCollider: {fileID: 3223335518858002285}

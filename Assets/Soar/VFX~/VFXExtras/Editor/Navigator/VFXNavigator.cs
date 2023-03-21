@@ -112,7 +112,7 @@ namespace UnityEditor.VFX.UI
             needReloadNavigator = false;
         }
 
-        class VFXNavigatorTreeView : TreeView
+        class VFXNavigatorTreeView : IMGUI.Controls.TreeView
         {
             VFXViewWindow m_Window;
             VFXView m_VFXView;
@@ -126,7 +126,7 @@ namespace UnityEditor.VFX.UI
 
             string GetSpawnSystemName(VFXBasicSpawner context)
             {
-                return context.GetParent().systemNames.GetUniqueSystemName(context);
+                return context.GetParent().systemNames.GetUniqueSystemName(context.GetData());
             }
 
             string GetParticleSystemName(VFXContext context)

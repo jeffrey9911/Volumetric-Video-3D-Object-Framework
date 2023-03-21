@@ -66,11 +66,19 @@ public partial class VFXGraphExtension //.Navigator
 
     static void CreateNavigatorIfRequired(VFXViewWindow window)
     {
+#if UNITY_2022_1_OR_NEWER
+        if (!navigators.ContainsKey(window))
+        {
+            navigators.Add(window, new VFXNavigator(window, NavigatorLoadPosition()));
+            navigatorVisibility.Add(window, GetNavigatorVisible(window));
+        }
+#else
         if (!navigators.ContainsKey(window))
         {
             navigators.Add(window, new VFXNavigator(VFXViewWindow.currentWindow, NavigatorLoadPosition()));
             navigatorVisibility.Add(window, GetNavigatorVisible(window));
         }
+#endif
     }
 
     static void ToggleNavigatorMenu(object wnd)
@@ -99,6 +107,34 @@ public partial class VFXGraphExtension //.Navigator
 
     static void SetNavigatorVisible(VFXViewWindow window, bool visible)
     {
+
+#if UNITY_2022_1_OR_NEWER
+        CreateNavigatorIfRequired(window);
+
+        var gv = window.graphView;
+        var navigator = navigators[window];
+        if (visible)
+        {
+            gv.Insert(gv.childCount - 1, navigator);
+            navigator.SetPosition(NavigatorLoadPosition());
+        }
+        else
+        {
+            NavigatorSavePosition(navigator.GetPosition());
+            navigator.RemoveFromHierarchy();
+        }
+
+        var asset = window.graphView?.controller?.model?.visualEffectObject?.GetResource()?.asset;
+
+        if (asset != null)
+        {
+            var guid = AssetDatabase.GUIDFromAssetPath(AssetDatabase.GetAssetPath(asset));
+            EditorPrefs.SetBool(kNavigatorVisiblePreferenceName + guid.ToString(), visible);
+        }
+
+        navigator.UpdatePresenterPosition();
+#else
+
         CreateNavigatorIfRequired(window);
 
         var gv = VFXViewWindow.currentWindow.graphView;
@@ -123,8 +159,7 @@ public partial class VFXGraphExtension //.Navigator
         }
 
         navigator.UpdatePresenterPosition();
+#endif
     }
-
-
 }
 #endif

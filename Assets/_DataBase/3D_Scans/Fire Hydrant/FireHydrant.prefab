@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 4233713468150235954}
   - component: {fileID: 4233713468150235957}
   - component: {fileID: 4233713468150235956}
+  - component: {fileID: 125985265855164959}
   m_Layer: 0
   m_Name: FireHydrant
   m_TagString: Untagged
@@ -34,7 +35,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: -1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &4233713468150235959
 MeshFilter:
@@ -132,3 +133,16 @@ MonoBehaviour:
   m_snapOrientation: 0
   m_snapOffset: {fileID: 0}
   m_grabPoints: []
+--- !u!114 &125985265855164959
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3468838379074829503}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fe63426e49940a43bd45e33f364427f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _objCollider: {fileID: 4233713468150235957}
